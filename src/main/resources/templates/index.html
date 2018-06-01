@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>Home Page</title>
+
+        <link  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+        <style th:inline="text">
+            body {
+                padding-top: 3.5rem;
+            }
+
+            .jumbotron {
+                background-image: url([[@{/img/hands.jpg}]]);
+
+                background-size:     cover;
+                background-repeat:   no-repeat;
+                background-position: center center;
+            }
+        </style>
+</style>
+    </head>
+    <body>
+
+        <main role="main">
+
+            <!-- Main jumbotron for a primary marketing message or call to action -->
+            <div class="jumbotron">
+                <div class="container">
+                    <h1 class="display-3">Provider Search</h1>
+                    <p>Search our network of distingusihed healthcare professionals to find someone to fit your needs.</p>
+                    <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Get help &raquo;</a></p>-->
+                </div>
+            </div>
+
+            <div class="container">
+                <form class="form-inline" action="/" method="POST">
+                  <div class="form-group mb-2">
+                    <label for="staticEmail2" class="sr-only">Email</label>
+                    <input type="text" readonly class="form-control-plaintext" id="zipCode" value="Zip code">
+                  </div>
+                  <div class="form-group mx-sm-3 mb-2">
+                    <label for="inputZipCode" class="sr-only">Zip Code</label>
+                    <input type="text" class="form-control" id="zipCode" name="zipCode" placeholder="Zip code">
+                  </div>
+                  <button type="submit" class="btn btn-primary mb-2">Search</button>
+                </form>
+
+            </div> <!-- /container -->
+
+            <div th:unless="${noSearch} == true" class="container">
+                You searched for zip code: <span th:text="${zipCode}"></span></p>
+            </div>
+
+            <table th:unless="${noSearch} == true" class="table table-sm">
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Phone</th>
+                    <th>Specialty</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip Code</th>
+                </tr>
+                <tbody class="table-striped">
+                    <tr th:each="result : ${results}">
+                        <td th:text="${result[1]}"></td>
+                        <td th:text="${result[2]}"></td>
+                        <td th:text="${result[3]}"></td>
+                        <td th:text="${result[8]}"></td>
+                        <td th:text="${result[4]}"></td>
+                        <td th:text="${result[5]}"></td>
+                        <td th:text="${result[6]}"></td>
+                        <td th:text="${result[7]}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </main>
+    </body>
+</html>
