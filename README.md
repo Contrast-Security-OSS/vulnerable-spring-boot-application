@@ -23,6 +23,25 @@ java -jar target/provider-search-0.0.1-SNAPSHOT.jar
 mvn clean test
 ```
 
+## Running With Contrast
+
+You will need an account with Contrast https://www.contrastsecurity.com
+
+* Review the `run-with-contrast` profile settings in `pom.xml`
+
+* Set the following environment variables
+
+```
+CONTRAST_MAVEN_USERNAME
+CONTRAST_MAVEN_ORGUUID
+CONTRAST_MAVEN_TEAMSERVERURL
+CONTRAST_MAVEN_APIKEY
+CONTRAST_MAVEN_SERVICEKEY
+```
+
+* `mvn install -P run-with-contrast`
+
+
 ## Details
 
 The application runs using an in-memory H2 database. Schema and sample data should load on boot.
