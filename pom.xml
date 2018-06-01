@@ -95,8 +95,8 @@
 							<serviceKey>${env.CONTRAST_MAVEN_SERVICEKEY}</serviceKey>
 							<apiUrl>${env.CONTRAST_MAVEN_TEAMSERVERURL}</apiUrl>
 							<orgUuid>${env.CONTRAST_MAVEN_ORGUUID}</orgUuid>
-							<appName>provider-search</appName>
-							<serverName>jupiter</serverName>
+							<appName>provider-birch</appName>
+							<serverName>mars</serverName>
 							<minSeverity>Note</minSeverity>
 						</configuration>
 					</plugin>
