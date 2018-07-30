@@ -14,7 +14,7 @@ mvn install
 java -jar target/provider-search-0.0.1-SNAPSHOT.jar
 ```
 
-* Go to http://localhost:8081/
+* Go to http://localhost:8080/
 * Search for zip 21230
 
 ## Test
