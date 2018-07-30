@@ -100,7 +100,7 @@
 							<serverName>openshift-provider-search</serverName>
 							<serverPath>/openshift</serverPath>
 							<minSeverity>Note</minSeverity>
-							<downloadLocation>/tmp/contrast</downloadLocation>
+							<downloadLocation>/home/jboss/.contrast/</downloadLocation>
 						</configuration>
 					</plugin>
 				</plugins>
