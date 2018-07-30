@@ -68,6 +68,14 @@
 	<profiles>
 		<profile>
 			<id>openshift</id>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>snapshots-repo</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+					<releases><enabled>false</enabled></releases>
+					<snapshots><enabled>true</enabled></snapshots>
+				</pluginRepository>
+			</pluginRepositories>
 			<build>
 				<plugins>
 					<plugin>
@@ -99,6 +107,14 @@
 		</profile>
 		<profile>
 			<id>run-with-contrast</id>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>snapshots-repo</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+					<releases><enabled>false</enabled></releases>
+					<snapshots><enabled>true</enabled></snapshots>
+				</pluginRepository>
+			</pluginRepositories>
 			<build>
 				<plugins>
 					<plugin>
