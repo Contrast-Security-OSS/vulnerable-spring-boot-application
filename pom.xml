@@ -67,6 +67,37 @@
 
 	<profiles>
 		<profile>
+			<id>openshift</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.contrastsecurity</groupId>
+						<artifactId>contrast-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>install-contrast-jar</id>
+								<goals>
+									<goal>install</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<username>${env.CONTRAST_MAVEN_USERNAME}</username>
+							<apiKey>${env.CONTRAST_MAVEN_APIKEY}</apiKey>
+							<serviceKey>${env.CONTRAST_MAVEN_SERVICEKEY}</serviceKey>
+							<apiUrl>${env.CONTRAST_MAVEN_TEAMSERVERURL}</apiUrl>
+							<orgUuid>${env.CONTRAST_MAVEN_ORGUUID}</orgUuid>
+							<appName>provider-directory</appName>
+							<serverName>openshift-provider-search</serverName>
+							<serverPath>/provider</serverPath>
+							<minSeverity>Note</minSeverity>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>run-with-contrast</id>
 			<build>
 				<plugins>
