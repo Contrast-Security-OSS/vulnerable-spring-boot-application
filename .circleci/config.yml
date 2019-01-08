@@ -1,11 +1,18 @@
-version: 2
+version: 2.1
 jobs:
-  build:
-    docker:
-      - image: circleci/openjdk:8-jdk
-    working_directory: ~/repo
-    environment:
-      MAVEN_OPTS: -Xmx3200m
+  contrast-verify:
+    executor: contrastsecurity/default
     steps:
-      - checkout
-      - run: mvn clean install -P run-with-contrast
+    - checkout
+    - contrastsecurity/check-vulnerabilities:
+        severities: MEDIUM 
+        org-id: 0b4acb35-f2b2-4d20-a392-25bcf9eae0cb
+        application-id: 0160b2bf-520a-40b0-b090-bdd8322e2b02
+        contrast-url: https://apptwo.contrastsecurity.com/Contrast
+
+orbs:
+  contrastsecurity: contrastsecurity/verify@0.1.1
+workflows:
+  test:
+    jobs:
+    - contrast-verify
