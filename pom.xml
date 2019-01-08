@@ -129,11 +129,11 @@
 							</execution>
 						</executions>
 						<configuration>
-							<username>${bamboo.CONTRAST_MAVEN_USERNAME}</username>
-							<apiKey>${bamboo.CONTRAST_MAVEN_APIKEY}</apiKey>
-							<serviceKey>${bamboo.CONTRAST_MAVEN_SERVICEKEY}</serviceKey>
-							<apiUrl>${bamboo.CONTRAST_MAVEN_TEAMSERVERURL}</apiUrl>
-							<orgUuid>${bamboo.CONTRAST_MAVEN_ORGUUID}</orgUuid>
+							<username>${bamboo.contrastmavenusername}</username>
+							<apiKey>${bamboo.contrastmavenapikey}</apiKey>
+							<serviceKey>${bamboo.contrastmavenservicekey}</serviceKey>
+							<apiUrl>${bamboo.contrastmaventeamserverurl}</apiUrl>
+							<orgUuid>${bamboo.contrastmavenorguuid}</orgUuid>
 							<appName>provider-directory</appName>
 							<serverName>venus</serverName>
 							<serverPath>/provider</serverPath>
