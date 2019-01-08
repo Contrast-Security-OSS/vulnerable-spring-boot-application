@@ -120,20 +120,13 @@
 									<goal>install</goal>
 								</goals>
 							</execution>
-							<execution>
-								<id>verify-with-contrast</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>verify</goal>
-								</goals>
-							</execution>
 						</executions>
 						<configuration>
-							<username>${bamboo.contrastmavenusername}</username>
-							<apiKey>${bamboo.contrastmavenapikey}</apiKey>
-							<serviceKey>${bamboo.contrastmavenservicekey}</serviceKey>
-							<apiUrl>${bamboo.contrastmaventeamserverurl}</apiUrl>
-							<orgUuid>${bamboo.contrastmavenorguuid}</orgUuid>
+							<username>${contrastMavenUsername}</username>
+							<apiKey>${contrastMavenApiKey}</apiKey>
+							<serviceKey>${contrastMavenServiceKey}</serviceKey>
+							<apiUrl>${contrastMavenTeamserverUrl}</apiUrl>
+							<orgUuid>${contrastMavenOrgUuid}</orgUuid>
 							<appName>provider-directory</appName>
 							<serverName>venus</serverName>
 							<serverPath>/provider</serverPath>
