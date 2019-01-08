@@ -73,7 +73,7 @@
 					<plugin>
 						<groupId>com.contrastsecurity</groupId>
 						<artifactId>contrast-maven-plugin</artifactId>
-						<version>2.2</version>
+						<version>2.3</version>
 						<executions>
 							<execution>
 								<id>install-contrast-jar</id>
@@ -95,6 +95,46 @@
 							<serviceKey>${env.CONTRAST_MAVEN_SERVICEKEY}</serviceKey>
 							<apiUrl>${env.CONTRAST_MAVEN_TEAMSERVERURL}</apiUrl>
 							<orgUuid>${env.CONTRAST_MAVEN_ORGUUID}</orgUuid>
+							<appName>provider-directory</appName>
+							<serverName>venus</serverName>
+							<serverPath>/provider</serverPath>
+							<minSeverity>Note</minSeverity>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	<profiles>
+		<profile>
+			<id>contrast-bamboo</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.contrastsecurity</groupId>
+						<artifactId>contrast-maven-plugin</artifactId>
+						<version>2.3</version>
+						<executions>
+							<execution>
+								<id>install-contrast-jar</id>
+								<goals>
+									<goal>install</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify-with-contrast</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<username>${bamboo.CONTRAST_MAVEN_USERNAME}</username>
+							<apiKey>${bamboo.CONTRAST_MAVEN_APIKEY}</apiKey>
+							<serviceKey>${bamboo.CONTRAST_MAVEN_SERVICEKEY}</serviceKey>
+							<apiUrl>${bamboo.CONTRAST_MAVEN_TEAMSERVERURL}</apiUrl>
+							<orgUuid>${bamboo.CONTRAST_MAVEN_ORGUUID}</orgUuid>
 							<appName>provider-directory</appName>
 							<serverName>venus</serverName>
 							<serverPath>/provider</serverPath>
