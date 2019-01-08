@@ -27,3 +27,4 @@
 .DS_Store
 .mvn/
 derby.log
+mvnenv.sh
