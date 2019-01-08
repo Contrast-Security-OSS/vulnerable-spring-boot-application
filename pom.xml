@@ -105,7 +105,6 @@
 			</build>
 		</profile>
 
-	<profiles>
 		<profile>
 			<id>contrast-bamboo</id>
 			<build>
