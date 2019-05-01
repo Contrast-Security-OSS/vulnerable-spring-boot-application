@@ -11,7 +11,7 @@ jobs:
         contrast-url: https://apptwo.contrastsecurity.com/Contrast
 
 orbs:
-  contrastsecurity: contrastsecurity/verify@0.1.1
+  contrastsecurity: contrastsecurity/verify@0.1.2
 workflows:
   test:
     jobs:
