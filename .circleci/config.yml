@@ -8,4 +8,4 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
     steps:
       - checkout
-      - run: mvn clean install -P run-with-contrast
+      - run: mvn clean install
