@@ -1,6 +1,6 @@
 # Vulnerable Spring Boot Application
 
-This application is an intentionally vulnerable Spring Boot application. The intent is to demonstrate the capabilities of Contrast Security's Maven plugin when used with continous integration (such as TravisCI or CircleCI).
+This application is an intentionally vulnerable Spring Boot application. The intent is to demonstrate the capabilities of Contrast Security's Maven plugin when used with continuous integration (such as TravisCI or CircleCI).
 
 ## Build
 
