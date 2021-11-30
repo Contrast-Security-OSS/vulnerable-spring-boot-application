@@ -2,11 +2,11 @@ FROM registry.access.redhat.com/ubi8/openjdk-8 as builder
 
 WORKDIR /source
 
-COPY pom.xml /source/
+COPY --chown=jboss:jboss pom.xml /source/
 
-COPY ./src/ /source/src/
+COPY --chown=jboss:jboss ./src/ /source/src/
 
-RUN whoami && pwd && mkdir target && ls -la && mvn -e clean package -DskipTests=true
+RUN mvn clean package -DskipTests=true
 
 FROM registry.access.redhat.com/ubi8/openjdk-8 as app
 
