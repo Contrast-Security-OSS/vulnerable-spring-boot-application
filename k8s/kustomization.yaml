@@ -1,0 +1,6 @@
+resources:
+- deployment.yaml
+images:
+- newName: my.image.registry/test
+  newTag: 1.4.0
+  name: .*provider-search.*

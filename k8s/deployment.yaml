@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: provider-search
+  name: provider-search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: provider-search
+  template:
+    metadata:
+      labels:
+        app: provider-search
+    spec:
+      containers:
+        - image: docker.io/provider-search:latest
+          name: provider-search
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: provider-search
+spec:
+  type: LoadBalancer
+  selector:
+    app: provider-search
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
