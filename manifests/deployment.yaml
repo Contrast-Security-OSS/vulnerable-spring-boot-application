@@ -29,7 +29,6 @@ kind: Service
 metadata:
   name: provider-search
 spec:
-  type: LoadBalancer
   selector:
     app: provider-search
   ports:
@@ -37,3 +36,19 @@ spec:
       targetPort: 8080
       protocol: TCP
       name: http
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: provider-search
+spec:
+  tls:
+    termination: edge
+  port:
+    targetPort: http
+  to:
+    kind: Service
+    name: provider-search
+    weight: 100
+  wildcardPolicy: None
+
