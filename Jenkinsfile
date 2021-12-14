@@ -6,8 +6,6 @@ pipeline {
 apiVersion: v1
 kind: Pod
 spec:
-  securityContext:
-    runAsUser: 100000
   containers:
     - name: contrast
       image: ghcr.io/garage-contrast/contrast-client-go:sha-b931941
@@ -40,30 +38,30 @@ spec:
         sh "ls /etc/subuid && cat /etc/subuid"  
       }
     }
-    stage('Build Contrast Container') {
-      steps {
-        container('buildah') {
-          sh "whoami"
-          sh "cat /etc/subuid"  
-          bash "buildah -h"
-          sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile -t 'test-intermediate' ."
-          bash '''
-cat > Dockerfile.contrast << 'EOF'
-FROM $(params.IMAGE)-intermediate
+//     stage('Build Contrast Container') {
+//       steps {
+//         container('buildah') {
+//           sh "whoami"
+//           sh "cat /etc/subuid"  
+//           bash "buildah -h"
+//           sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile -t 'test-intermediate' ."
+//           bash '''
+// cat > Dockerfile.contrast << 'EOF'
+// FROM $(params.IMAGE)-intermediate
 
-RUN mkdir -p /opt/contrast \
-&& mvn dependency:copy -Dartifact=com.contrastsecurity:contrast-agent:LATEST -DoutputDirectory=/opt/contrast \
-&& mv /opt/contrast/contrast-agent*.jar /opt/contrast/contrast-agent.jar
+// RUN mkdir -p /opt/contrast \
+// && mvn dependency:copy -Dartifact=com.contrastsecurity:contrast-agent:LATEST -DoutputDirectory=/opt/contrast \
+// && mv /opt/contrast/contrast-agent*.jar /opt/contrast/contrast-agent.jar
 
-ENV JAVA_TOOL_OPTIONS="-javaagent:/opt/contrast/contrast-agent.jar"
-EOF
+// ENV JAVA_TOOL_OPTIONS="-javaagent:/opt/contrast/contrast-agent.jar"
+// EOF
 
-cat Dockerfile.contrast
-'''
-          sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile.contrast -t 'test-final' ."
-        }
-      }
-    }
+// cat Dockerfile.contrast
+// '''
+//           sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile.contrast -t 'test-final' ."
+//         }
+//       }
+//     }
     stage('Contrast Config') {
       steps {
         container('contrast') {
