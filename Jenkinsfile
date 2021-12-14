@@ -14,7 +14,7 @@ spec:
       - mountPath: '/shared'
         name: sharedvolume
     - name: buildah
-      image: quay.io/buildah/stable:v1.23.0
+      image: ghcr.io/garage-contrast/jenkinsagent:sha-31a5855
       command: ["tail", "-f", "/dev/null"]
       volumeMounts:
       - name: sharedvolume
@@ -38,30 +38,30 @@ spec:
         sh "ls /etc/subuid && cat /etc/subuid"  
       }
     }
-//     stage('Build Contrast Container') {
-//       steps {
-//         container('buildah') {
-//           sh "whoami"
-//           sh "cat /etc/subuid"  
-//           bash "buildah -h"
-//           sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile -t 'test-intermediate' ."
-//           bash '''
-// cat > Dockerfile.contrast << 'EOF'
-// FROM $(params.IMAGE)-intermediate
+    stage('Build Contrast Container') {
+      steps {
+        container('buildah') {
+          sh "whoami"
+          sh "cat /etc/subuid"  
+          bash "buildah -h"
+          sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile -t 'test-intermediate' ."
+          bash '''
+cat > Dockerfile.contrast << 'EOF'
+FROM $(params.IMAGE)-intermediate
 
-// RUN mkdir -p /opt/contrast \
-// && mvn dependency:copy -Dartifact=com.contrastsecurity:contrast-agent:LATEST -DoutputDirectory=/opt/contrast \
-// && mv /opt/contrast/contrast-agent*.jar /opt/contrast/contrast-agent.jar
+RUN mkdir -p /opt/contrast \
+&& mvn dependency:copy -Dartifact=com.contrastsecurity:contrast-agent:LATEST -DoutputDirectory=/opt/contrast \
+&& mv /opt/contrast/contrast-agent*.jar /opt/contrast/contrast-agent.jar
 
-// ENV JAVA_TOOL_OPTIONS="-javaagent:/opt/contrast/contrast-agent.jar"
-// EOF
+ENV JAVA_TOOL_OPTIONS="-javaagent:/opt/contrast/contrast-agent.jar"
+EOF
 
-// cat Dockerfile.contrast
-// '''
-//           sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile.contrast -t 'test-final' ."
-//         }
-//       }
-//     }
+cat Dockerfile.contrast
+'''
+          sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile.contrast -t 'test-final' ."
+        }
+      }
+    }
     stage('Contrast Config') {
       steps {
         container('contrast') {
