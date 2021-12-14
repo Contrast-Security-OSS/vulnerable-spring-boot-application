@@ -43,9 +43,9 @@ spec:
         container('buildah') {
           sh "whoami"
           sh "cat /etc/subuid"  
-          bash "buildah -h"
+          sh "buildah -h"
           sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile -t 'test-intermediate' ."
-          bash '''
+          sh '''
 cat > Dockerfile.contrast << 'EOF'
 FROM $(params.IMAGE)-intermediate
 
