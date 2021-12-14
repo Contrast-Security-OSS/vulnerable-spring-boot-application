@@ -6,8 +6,6 @@ pipeline {
 apiVersion: v1
 kind: Pod
 spec:
-  securityContext:
-    runAsUser: 1000990000
   containers:
     - name: contrast
       image: ghcr.io/garage-contrast/contrast-client-go:sha-b931941
@@ -35,12 +33,17 @@ spec:
   stages {
     stage('Do something') {
       steps {
-        sh "echo 'hello world'"   
+        sh "echo 'hello world'" 
+        sh "echo whoami"
+        sh "ls /etc/subuid && cat /etc/subuid"  
       }
     }
     stage('Build Contrast Container') {
       steps {
         container('buildah') {
+          sh "which buildah"
+          sh "whoami"
+          sh "ls /etc/subuid && cat /etc/subuid"  
           sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile -t 'test-intermediate' ."
           bash '''
 cat > Dockerfile.contrast << 'EOF'
