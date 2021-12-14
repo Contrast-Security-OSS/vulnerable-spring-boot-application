@@ -7,7 +7,7 @@ apiVersion: v1
 kind: Pod
 spec:
   securityContext:
-    runAsUser: 1000
+    runAsUser: 1000990000
   containers:
     - name: contrast
       image: ghcr.io/garage-contrast/contrast-client-go:sha-b931941
