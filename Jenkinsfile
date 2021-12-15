@@ -14,7 +14,7 @@ spec:
       - mountPath: '/shared'
         name: sharedvolume
     - name: buildah
-      image: ghcr.io/garage-contrast/jenkinsagent:sha-c6f4195
+      image: ghcr.io/garage-contrast/jenkinsagent:sha-31195e1
       command: ["tail", "-f", "/dev/null"]
       volumeMounts:
       - name: sharedvolume
