@@ -31,6 +31,17 @@ spec:
     }
   }
   stages {
+    stage('preamble') {
+        steps {
+            script {
+                openshift.withCluster() {
+                    openshift.withProject() {
+                        echo "Using project: ${openshift.project()}"
+                    }
+                }
+            }
+        }
+    }
     stage('Do something') {
       steps {
         sh "echo 'hello world'" 
