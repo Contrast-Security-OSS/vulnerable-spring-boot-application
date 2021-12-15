@@ -41,9 +41,8 @@ spec:
     stage('Build Contrast Container') {
       steps {
         container('buildah') {
-          sh "whoami"
-          sh "cat /etc/subuid"  
-          sh "buildah -h"
+          sh "pwd"
+          sh "ls -lah"
           sh "buildah --storage-driver=vfs bud --format=oci --layers=true -f ./Dockerfile -t 'test-intermediate' ."
           sh '''
 cat > Dockerfile.contrast << 'EOF'
