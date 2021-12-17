@@ -92,18 +92,17 @@ spec:
     // }
     stage('build') {
       steps {
-        sh "echo $PATH"
         sh '''
-cat > buildconfig.yaml << 'EOF'
+cat > buildconfig-template.yaml << 'EOF'
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  name: intermed-build
+  name: $APP_NAME-intermed
 spec:
   source:
     type: Git
     git:
-      uri: ''
+      uri: $GIT_URL
   strategy:
     type: Docker
     dockerStrategy:
@@ -111,22 +110,20 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: 'java-app:intermediate'
-EOF
-cat > imagestream.yaml << 'EOF'
+      name: $APP_NAME:intermediate
+---
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
-  name: ${env.APP_NAME}
+  name: $APP_NAME
 spec:
   lookupPolicy:
     local: true
-EOF
-cat > contrastbuildconfig.yaml << 'EOF'
+---
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  name: contrast-build
+  name: $APP-NAME-contrast
 spec:
   source:
     dockerfile: |
@@ -142,31 +139,26 @@ spec:
     dockerStrategy:
       from:
         kind: ImageStreamTag
-        name: ${env.APP_NAME}:intermediate
+        name: $APP_NAME:intermediate
   output:
     to:
       kind: ImageStreamTag
-      name: ${env.APP_NAME}:latest
+      name: $APP_NAME:latest
   triggers:
     - type: ImageChange
       imageChange: {}
 EOF
-
 ls -lh
 pwd
 '''
         container('openshift') {
+          sh "APP_NAME=${env.APP_NAME} GIT_URL=${env.GIT_URL} envsubst '$APP_NAME,$GIT_URL' < \"buildconfig-template.yaml\" > \"buildconfig.yaml\""
+        }
+        container('openshift') {
           script {
             openshift.withCluster() {
                 openshift.withProject() {
-                  def intbuildconfig = openshift.process(readFile( './buildconfig.yaml' )).object()
-                  intbuildconfig.metadata.name = "${env.APP_NAME}-intermed"
-                  intbuildconfig.spec.source.git.uri = env.GIT_URL
-                  intbuildconfig.spec.output.to.name = "${env.APP_NAME}:intermediate"
-                  openshift.apply(intbuildconfig)
-
-                  def imagestream = openshift.apply(readFile( './imagestream.yaml' ))
-                  def contrastbuilt = openshift.apply(readFile( './contrastbuildconfig.yaml' ))
+                  def buildconfig = openshift.apply(readFile( './buildconfig.yaml' ))
                 }
             }
           }
