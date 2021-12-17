@@ -6,6 +6,7 @@ pipeline {
 apiVersion: v1
 kind: Pod
 spec:
+  serviceAccountName: jenkins
   containers:
     - name: contrast
       image: ghcr.io/garage-contrast/contrast-client-go:sha-b931941
