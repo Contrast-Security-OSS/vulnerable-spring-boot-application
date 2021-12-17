@@ -87,8 +87,7 @@ spec:
     // }
     stage('build') {
       steps {
-        sh "which oc"
-        sh "echo"
+        sh "echo $PATH"
         sh '''
 cat > buildconfig.yaml << 'EOF'
 apiVersion: build.openshift.io/v1
@@ -153,14 +152,20 @@ spec:
       imageChange: {}
 EOF
 ls -lh
+pwd
 '''
-        script {
+        try {
+          script {
             openshift.withCluster() {
                 openshift.withProject() {
-                  def buildconfig = openshift.create(readFile( 'buildconfig.yaml' ))
+                  def buildconfig = openshift.create(readFile( './buildconfig.yaml' ))
                 }
             }
+          }  
+        } catch(err) {
+          sh "ls -lh"
         }
+
       }
     }
     // stage('deploy') {
