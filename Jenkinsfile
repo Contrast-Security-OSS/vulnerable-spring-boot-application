@@ -13,7 +13,7 @@ spec:
       volumeMounts:
       - mountPath: '/shared'
         name: sharedvolume
-    - name: jnlp
+    - name: openshift
       image: registry.redhat.io/openshift4/ose-jenkins-agent-base:latest
       command: ["tail", "-f", "/dev/null"]
   volumes:
