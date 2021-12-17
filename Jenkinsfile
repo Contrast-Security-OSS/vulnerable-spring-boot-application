@@ -14,6 +14,11 @@ spec:
     - name: openshift
       image: registry.redhat.io/openshift4/ose-jenkins-agent-base:latest
       command: ["tail", "-f", "/dev/null"]
+      env:
+        - name: LANG
+          value: ""
+        - name: LC_ALL
+          value: ""
     - name: yq
       image: docker.io/mikefarah/yq:latest
       command: ["tail", "-f", "/dev/null"]
@@ -123,7 +128,7 @@ pwd
               openshift.withProject() {
                 def bc = openshift.selector('bc', "${env.APP_NAME}-intermed")
                 def buildSelector = bc.startBuild()
-                // buildSelector.logs('-f')
+                buildSelector.logs('-f')
 
                 // def cbc = openshift.selector('bc', "${env.APP_NAME}-contrast")
                 // def builds = cbc.related('builds')
@@ -136,28 +141,27 @@ pwd
         }
       }
     }
-    stage('Customize Deployment 1') {
-      steps {
-        container('openshift') {
-          script {
-            openshift.withCluster() {
-              openshift.withProject() {
-                echo openshift.raw("create configmap contrast-cm --from-literal=CONTRAST__API__URL=${env.CONTRAST_URL} --from-literal=CONTRAST__AGENT__JAVA__STANDALONE_APP_NAME=${env.APP_NAME} --from-literal=CONTRAST__APPLICATION__NAME=${env.APP_NAME} --dry-run -o yaml").actions[0].out
-                openshift.apply(openshift.raw("create configmap contrast-cm --from-literal=CONTRAST__API__URL=${env.CONTRAST_URL} --from-literal=CONTRAST__AGENT__JAVA__STANDALONE_APP_NAME=${env.APP_NAME} --from-literal=CONTRAST__APPLICATION__NAME=${env.APP_NAME} --dry-run -o yaml").actions[0].out)
-                // openshift.apply(openshift.raw("create secret generic contrast-secret --from-literal=CONTRAST__API__API_KEY=${env.CONTRAST_APIKEY} --from-literal=CONTRAST__API__SERVICE_KEY=${env.CONTRAST_SERVICEKEY} --from-literal=CONTRAST__API__USER_NAME=${env.CONTRAST_USERNAME} --dry-run -o yaml").actions[0].out)
-              }
-            }
-          }
-        }
-      }
-    }    
+    // stage('Customize Deployment 1') {
+    //   steps {
+    //     container('openshift') {
+    //       script {
+    //         openshift.withCluster() {
+    //           openshift.withProject() {
+    //             openshift.apply(openshift.raw("create configmap contrast-cm --from-literal=CONTRAST__API__URL=${env.CONTRAST_URL} --from-literal=CONTRAST__AGENT__JAVA__STANDALONE_APP_NAME=${env.APP_NAME} --from-literal=CONTRAST__APPLICATION__NAME=${env.APP_NAME} --dry-run -o yaml").actions[0].out)
+    //             openshift.apply(openshift.raw("create secret generic contrast-secret --from-literal=CONTRAST__API__API_KEY=${env.CONTRAST_APIKEY} --from-literal=CONTRAST__API__SERVICE_KEY=${env.CONTRAST_SERVICEKEY} --from-literal=CONTRAST__API__USER_NAME=${env.CONTRAST_USERNAME} --dry-run -o yaml").actions[0].out)
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }    
     stage('Customize Deployment 2') {
       steps {
         container('openshift') {
           script {
             openshift.withCluster() {
               openshift.withProject() {
-                // openshift.apply(openshift.raw("create configmap contrast-cm --from-literal=CONTRAST__API__URL=${env.CONTRAST_URL} --from-literal=CONTRAST__AGENT__JAVA__STANDALONE_APP_NAME=${env.APP_NAME} --from-literal=CONTRAST__APPLICATION__NAME=${env.APP_NAME} --dry-run -o yaml").actions[0].out)
+                openshift.apply(openshift.raw("create configmap contrast-cm --from-literal=CONTRAST__API__URL=${env.CONTRAST_URL} --from-literal=CONTRAST__AGENT__JAVA__STANDALONE_APP_NAME=${env.APP_NAME} --from-literal=CONTRAST__APPLICATION__NAME=${env.APP_NAME} --dry-run -o yaml").actions[0].out)
                 openshift.apply(openshift.raw("create secret generic contrast-secret --from-literal=CONTRAST__API__API_KEY=${env.CONTRAST_APIKEY} --from-literal=CONTRAST__API__SERVICE_KEY=${env.CONTRAST_SERVICEKEY} --from-literal=CONTRAST__API__USER_NAME=${env.CONTRAST_USERNAME} --dry-run -o yaml").actions[0].out)
               }
             }
