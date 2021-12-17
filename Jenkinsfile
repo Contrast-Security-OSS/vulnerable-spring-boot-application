@@ -159,9 +159,7 @@ pwd
           script {
             openshift.withCluster() {
                 openshift.withProject() {
-                  openshift.withCredentials( 'oc-priv' ) {
                     def buildconfig = openshift.create(readFile( './buildconfig.yaml' ))
-                  }
                 }
             }
           }
