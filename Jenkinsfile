@@ -154,11 +154,13 @@ EOF
 ls -lh
 pwd
 '''
-        script {
-          openshift.withCluster() {
-              openshift.withProject() {
-                def buildconfig = openshift.create(readFile( './buildconfig.yaml' ))
-              }
+        container('openshift') {
+          script {
+            openshift.withCluster() {
+                openshift.withProject() {
+                  def buildconfig = openshift.create(readFile( './buildconfig.yaml' ))
+                }
+            }
           }
         }
       }
