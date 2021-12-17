@@ -123,13 +123,13 @@ pwd
               openshift.withProject() {
                 def bc = openshift.selector('bc', "${env.APP_NAME}-intermed")
                 def buildSelector = bc.startBuild()
-                // buildSelector.logs('-f')
+                buildSelector.logs('-f')
 
-                def cbc = openshift.selector('bc', "${env.APP_NAME}-contrast")
-                def builds = cbc.related('builds')
-                builds.untilEach(1) { 
-                  return it.object().status.phase == "Complete"
-                }
+                // def cbc = openshift.selector('bc', "${env.APP_NAME}-contrast")
+                // def builds = cbc.related('builds')
+                // builds.untilEach(1) { 
+                //   return it.object().status.phase == "Complete"
+                // }
               }
             }
           }
