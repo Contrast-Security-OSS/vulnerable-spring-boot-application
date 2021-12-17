@@ -98,14 +98,14 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: ${APP_NAME}:${GIT_SHA}
+      name: ${APP_NAME}:${GIT_COMMIT}
   triggers:
     - type: ImageChange
       imageChange: {}
 EOF
 '''
         container('openshift') {
-          sh "APP_NAME=${env.APP_NAME} GIT_URL=${env.GIT_URL} GIT_SHA=${env.GIT_COMMIT} envsubst '\$APP_NAME,\$GIT_URL' < \"buildconfig-template.yaml\" > \"buildconfig.yaml\""
+          sh "APP_NAME=${env.APP_NAME} GIT_URL=${env.GIT_URL} GIT_COMMIT=${env.GIT_COMMIT} envsubst '\$APP_NAME,\$GIT_COMMIT,\$GIT_URL' < \"buildconfig-template.yaml\" > \"buildconfig.yaml\""
         }
         container('openshift') {
           script {
@@ -158,7 +158,7 @@ done
 cat >> kustomization-template.yaml << 'EOF'
 images:
 - name: .*${APP_NAME}.*
-  tag: $GIT_SHA
+  tag: $GIT_COMMIT
   newName: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${APP_NAME}
 patchesStrategicMerge:
 - |-
@@ -180,7 +180,7 @@ EOF
 '''
         }
         container('openshift') {
-          sh "cd manifests && APP_NAME=${env.APP_NAME} NAMESPACE=${env.PROJECT} GIT_SHA=${env.GIT_COMMIT} envsubst '\$APP_NAME,\$NAMESPACE,\$GIT_URL' < \"kustomization-template.yaml\" > \"kustomization.yaml\""
+          sh "cd manifests && APP_NAME=${env.APP_NAME} NAMESPACE=${env.PROJECT} GIT_COMMIT=${env.GIT_COMMIT} envsubst '\$APP_NAME,\$NAMESPACE,\$GIT_URL' < \"kustomization-template.yaml\" > \"kustomization.yaml\""
         }
       }
     }
