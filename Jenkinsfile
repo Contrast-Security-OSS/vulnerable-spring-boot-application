@@ -152,7 +152,7 @@ RESOURCES=$(ls)
 echo 'resources:' | tee -a kustomization-template.yaml
 for res in $RESOURCES ; 
 do
-  (yq ea -N -e '. | has("apiVersion")' $res  >> /dev/null && echo "- $res" | tee -a kustomization.yaml ) || echo "$res is invalid"
+  (yq ea -N -e '. | has("apiVersion")' $res  >> /dev/null && echo "- $res" | tee -a kustomization-template.yaml ) || echo "$res is invalid"
 done
 
 cat >> kustomization-template.yaml << 'EOF'
