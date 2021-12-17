@@ -97,7 +97,7 @@ cat > buildconfig-template.yaml << 'EOF'
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  name: $APP_NAME-intermed
+  name: ${APP_NAME}-intermed
 spec:
   source:
     type: Git
@@ -110,7 +110,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: $APP_NAME:intermediate
+      name: ${APP_NAME}:intermediate
 ---
 apiVersion: image.openshift.io/v1
 kind: ImageStream
@@ -123,7 +123,7 @@ spec:
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  name: $APP-NAME-contrast
+  name: ${APP_NAME}-contrast
 spec:
   source:
     dockerfile: |
@@ -139,11 +139,11 @@ spec:
     dockerStrategy:
       from:
         kind: ImageStreamTag
-        name: $APP_NAME:intermediate
+        name: ${APP_NAME}:intermediate
   output:
     to:
       kind: ImageStreamTag
-      name: $APP_NAME:latest
+      name: ${APP_NAME}:latest
   triggers:
     - type: ImageChange
       imageChange: {}
@@ -152,7 +152,7 @@ ls -lh
 pwd
 '''
         container('openshift') {
-          sh "APP_NAME=${env.APP_NAME} GIT_URL=${env.GIT_URL} envsubst '$APP_NAME,$GIT_URL' < \"buildconfig-template.yaml\" > \"buildconfig.yaml\""
+          sh "APP_NAME=${env.APP_NAME} GIT_URL=${env.GIT_URL} envsubst '\$APP_NAME,\$GIT_URL' < \"buildconfig-template.yaml\" > \"buildconfig.yaml\""
         }
         container('openshift') {
           script {
