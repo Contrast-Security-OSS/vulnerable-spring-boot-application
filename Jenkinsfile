@@ -95,10 +95,8 @@ spec:
     }
     stage('build') {
       steps {
-        script {
-            openshift.withCluster() {
-                openshift.withProject() {
-                  def buildconfig = openshift.apply('''
+        sh '''
+cat > buildconfig.yaml << 'EOF'
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
@@ -119,13 +117,53 @@ spec:
     to:
       kind: ImageStreamTag
       name: 'java-app:intermediate'
-''')
-                  // def builds = openshift.selector("bc", templateName).related('builds')
-                  // timeout(5) { 
-                  //   builds.untilEach(1) {
-                  //     return (it.object().status.phase == "Complete")
-                  //   }
-                  // }
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: java-app
+spec:
+  lookupPolicy:
+    local: true
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: contrast-build
+  namespace: my-test-project
+  labels:
+    name: contrast-build
+spec:
+  source:
+    dockerfile: |
+      FROM please/replace/this:latest
+
+      RUN mkdir -p /opt/contrast \
+      && mvn dependency:copy -Dartifact=com.contrastsecurity:contrast-agent:LATEST -DoutputDirectory=/opt/contrast \
+      && mv /opt/contrast/contrast-agent*.jar /opt/contrast/contrast-agent.jar
+      
+      ENV JAVA_TOOL_OPTIONS="-javaagent:/opt/contrast/contrast-agent.jar"
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: my-test-project
+        name: java-app:intermediate
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'java-app:latest'
+  triggers:
+    - type: ImageChange
+      imageChange: {}
+EOF
+ls -lh
+'''
+        script {
+            openshift.withCluster() {
+                openshift.withProject() {
+                  def buildconfig = openshift.create(readFile( 'buildconfig.yaml' ))
                 }
             }
         }
