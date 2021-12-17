@@ -1,35 +1,36 @@
 pipeline {
-  agent {
-    kubernetes {
-      idleMinutes 5
-      yaml '''
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-    - name: contrast
-      image: ghcr.io/garage-contrast/contrast-client-go:sha-b931941
-      command: ["tail", "-f", "/dev/null"]
-      volumeMounts:
-      - mountPath: '/shared'
-        name: sharedvolume
-    - name: buildah
-      image: ghcr.io/garage-contrast/jenkinsagent:sha-31195e1
-      command: ["tail", "-f", "/dev/null"]
-      volumeMounts:
-      - name: sharedvolume
-        mountPath: '/shared'
-      - name: varlibcontainers
-        mountPath: '/var/lib/containers'
+  agent none
+//   {
+//     kubernetes {
+//       idleMinutes 5
+//       yaml '''
+// apiVersion: v1
+// kind: Pod
+// spec:
+//   containers:
+//     - name: contrast
+//       image: ghcr.io/garage-contrast/contrast-client-go:sha-b931941
+//       command: ["tail", "-f", "/dev/null"]
+//       volumeMounts:
+//       - mountPath: '/shared'
+//         name: sharedvolume
+//     - name: buildah
+//       image: ghcr.io/garage-contrast/jenkinsagent:sha-31195e1
+//       command: ["tail", "-f", "/dev/null"]
+//       volumeMounts:
+//       - name: sharedvolume
+//         mountPath: '/shared'
+//       - name: varlibcontainers
+//         mountPath: '/var/lib/containers'
     
-  volumes:
-    - name: sharedvolume
-      emptyDir: {}
-    - name: varlibcontainers
-      emptyDir: {}
-'''
-    }
-  }
+//   volumes:
+//     - name: sharedvolume
+//       emptyDir: {}
+//     - name: varlibcontainers
+//       emptyDir: {}
+// '''
+//     }
+//   }
   stages {
     stage('preamble') {
         steps {
@@ -72,29 +73,31 @@ spec:
 //         }
 //       }
 //     }
-    stage('Contrast Config') {
-      steps {
-        container('contrast') {
-          sh "contrast-metadata -h"   
-        }
-      }
-    }
-    stage('Customize Deployment') {
-      steps {
-        container('contrast') {
-          sh "contrast-metadata -h"   
-        }
-      }
-    }
-    stage('Deploy Application') {
-      steps {
-        container('contrast') {
-          sh "contrast-metadata -h"   
-        }
-      }
-    }
+    // stage('Contrast Config') {
+    //   steps {
+    //     container('contrast') {
+    //       sh "contrast-metadata -h"   
+    //     }
+    //   }
+    // }
+    // stage('Customize Deployment') {
+    //   steps {
+    //     container('contrast') {
+    //       sh "contrast-metadata -h"   
+    //     }
+    //   }
+    // }
+    // stage('Deploy Application') {
+    //   steps {
+    //     container('contrast') {
+    //       sh "contrast-metadata -h"   
+    //     }
+    //   }
+    // }
     stage('build') {
       steps {
+        sh "which oc"
+        sh "echo $PATH"
         sh '''
 cat > buildconfig.yaml << 'EOF'
 apiVersion: build.openshift.io/v1
