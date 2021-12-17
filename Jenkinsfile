@@ -23,10 +23,10 @@ spec:
   environment {
     APP_NAME = 'vulnerable-spring-boot-app'
     PROJECT = 'my-test-project'
-    CONTRAST_URL = ''
-    CONTRAST_APIKEY = ''
-    CONTRAST_SERVICEKEY = ''
-    CONTRAST_USERNAME = ''
+    CONTRAST_URL = 'asdf'
+    CONTRAST_APIKEY = 'asdf'
+    CONTRAST_SERVICEKEY = 'asdf'
+    CONTRAST_USERNAME = 'asdf'
   }
   stages {
     stage('preamble') {
@@ -136,13 +136,27 @@ pwd
         }
       }
     }
-    stage('Customize Deployment') {
+    stage('Customize Deployment 1') {
       steps {
         container('openshift') {
           script {
             openshift.withCluster() {
               openshift.withProject() {
                 openshift.apply(openshift.raw("create configmap contrast-cm --from-literal=CONTRAST__API__URL=${env.CONTRAST_URL} --from-literal=CONTRAST__AGENT__JAVA__STANDALONE_APP_NAME=${env.APP_NAME} --from-literal=CONTRAST__APPLICATION__NAME=${env.APP_NAME} --dry-run -o yaml").actions[0].out)
+                // openshift.apply(openshift.raw("create secret generic contrast-secret --from-literal=CONTRAST__API__API_KEY=${env.CONTRAST_APIKEY} --from-literal=CONTRAST__API__SERVICE_KEY=${env.CONTRAST_SERVICEKEY} --from-literal=CONTRAST__API__USER_NAME=${env.CONTRAST_USERNAME} --dry-run -o yaml").actions[0].out)
+              }
+            }
+          }
+        }
+      }
+    }    
+    stage('Customize Deployment 2') {
+      steps {
+        container('openshift') {
+          script {
+            openshift.withCluster() {
+              openshift.withProject() {
+                // openshift.apply(openshift.raw("create configmap contrast-cm --from-literal=CONTRAST__API__URL=${env.CONTRAST_URL} --from-literal=CONTRAST__AGENT__JAVA__STANDALONE_APP_NAME=${env.APP_NAME} --from-literal=CONTRAST__APPLICATION__NAME=${env.APP_NAME} --dry-run -o yaml").actions[0].out)
                 openshift.apply(openshift.raw("create secret generic contrast-secret --from-literal=CONTRAST__API__API_KEY=${env.CONTRAST_APIKEY} --from-literal=CONTRAST__API__SERVICE_KEY=${env.CONTRAST_SERVICEKEY} --from-literal=CONTRAST__API__USER_NAME=${env.CONTRAST_USERNAME} --dry-run -o yaml").actions[0].out)
               }
             }
