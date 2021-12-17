@@ -23,6 +23,10 @@ spec:
 '''
     }
   }
+  environment {
+    APP_NAME = 'vulnerable-spring-boot-app'
+    PROJECT = 'my-test-project'
+  }
   stages {
     stage('preamble') {
         steps {
@@ -95,14 +99,11 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   name: intermed-build
-  namespace: my-test-project
-  labels:
-    name: intermed-build
 spec:
   source:
     type: Git
     git:
-      uri: 'https://github.com/Garage-Contrast/vulnerable-spring-boot-application.git'
+      uri: ''
   strategy:
     type: Docker
     dockerStrategy:
@@ -111,22 +112,21 @@ spec:
     to:
       kind: ImageStreamTag
       name: 'java-app:intermediate'
----
+EOF
+cat > imagestream.yaml << 'EOF'
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
-  name: java-app
+  name: ${env.APP_NAME}
 spec:
   lookupPolicy:
     local: true
----
+EOF
+cat > contrastbuildconfig.yaml << 'EOF'
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   name: contrast-build
-  namespace: my-test-project
-  labels:
-    name: contrast-build
 spec:
   source:
     dockerfile: |
@@ -142,16 +142,16 @@ spec:
     dockerStrategy:
       from:
         kind: ImageStreamTag
-        namespace: my-test-project
-        name: java-app:intermediate
+        name: ${env.APP_NAME}:intermediate
   output:
     to:
       kind: ImageStreamTag
-      name: 'java-app:latest'
+      name: ${env.APP_NAME}:latest
   triggers:
     - type: ImageChange
       imageChange: {}
 EOF
+
 ls -lh
 pwd
 '''
@@ -159,7 +159,14 @@ pwd
           script {
             openshift.withCluster() {
                 openshift.withProject() {
-                    def buildconfig = openshift.create(readFile( './buildconfig.yaml' ))
+                  def intbuildconfig = openshift.process(readFile( './buildconfig.yaml' )).object()
+                  intbuildconfig.metadata.name = "${env.APP_NAME}-intermed"
+                  intbuildconfig.spec.source.git.uri = env.GIT_URL
+                  intbuildconfig.spec.output.to.name = "${env.APP_NAME}:intermediate"
+                  openshift.apply(intbuildconfig)
+
+                  def imagestream = openshift.apply(readFile( './imagestream.yaml' ))
+                  def contrastbuilt = openshift.apply(readFile( './contrastbuildconfig.yaml' ))
                 }
             }
           }
