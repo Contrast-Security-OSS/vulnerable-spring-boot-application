@@ -158,7 +158,7 @@ done
 cat >> kustomization-template.yaml << 'EOF'
 images:
 - name: .*${APP_NAME}.*
-  tag: $GIT_COMMIT
+  newTag: $GIT_COMMIT
   newName: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${APP_NAME}
 patchesStrategicMerge:
 - |-
