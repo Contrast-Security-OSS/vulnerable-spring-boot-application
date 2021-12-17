@@ -190,6 +190,9 @@ EOF
           script {
             openshift.withCluster() {
               openshift.withProject() {
+                sh "ls -lah manifests/"
+                sh "cat manifests/kustomization.yaml"
+                sh "oc kustomize manifests"
                 sh "oc kustomize manifests | oc apply -f -"
               }
             }
