@@ -26,7 +26,7 @@ spec:
     }
   }
   environment {
-    APP_NAME = 'vulnerable-spring-boot-app'
+    APP_NAME = 'provider-search'
     PROJECT = 'my-test-project'
     CONTRAST_URL = 'asdf'
     CONTRAST_APIKEY = 'asdf'
@@ -98,14 +98,14 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: ${APP_NAME}:latest
+      name: ${APP_NAME}:${GIT_SHA}
   triggers:
     - type: ImageChange
       imageChange: {}
 EOF
 '''
         container('openshift') {
-          sh "APP_NAME=${env.APP_NAME} GIT_URL=${env.GIT_URL} envsubst '\$APP_NAME,\$GIT_URL' < \"buildconfig-template.yaml\" > \"buildconfig.yaml\""
+          sh "APP_NAME=${env.APP_NAME} GIT_URL=${env.GIT_URL} GIT_SHA=${env.GIT_COMMIT} envsubst '\$APP_NAME,\$GIT_URL' < \"buildconfig-template.yaml\" > \"buildconfig.yaml\""
         }
         container('openshift') {
           script {
@@ -127,12 +127,6 @@ EOF
                 def bc = openshift.selector('bc', "${env.APP_NAME}-intermed")
                 def buildSelector = bc.startBuild()
                 buildSelector.logs('-f')
-
-                // def cbc = openshift.selector('bc', "${env.APP_NAME}-contrast")
-                // def builds = cbc.related('builds')
-                // builds.untilEach(1) { 
-                //   return it.object().status.phase == "Complete"
-                // }
               }
             }
           }
@@ -153,37 +147,40 @@ EOF
         }
         container('yq') {
           sh '''
+cd manifests
 RESOURCES=$(ls)
-echo 'resources:' | tee -a manifests/kustomization.yaml
+echo 'resources:' | tee -a kustomization-template.yaml
 for res in $RESOURCES ; 
 do
   (yq ea -N -e '. | has("apiVersion")' $res  >> /dev/null && echo "- $res" | tee -a kustomization.yaml ) || echo "$res is invalid"
 done
 
-cat >> manifests/kustomization.yaml << 'EOF'
+cat >> kustomization-template.yaml << 'EOF'
 images:
-- name: .*$(params.IMAGE).*
-  digest: $(params.IMAGE_DIGEST)
-  newName: $(params.IMAGE_FQ_NAME)
+- name: .*${APP_NAME}.*
+  tag: $GIT_SHA
+  newName: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${APP_NAME}
 patchesStrategicMerge:
 - |-
   apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: $(params.DEPLOYMENT)
+    name: ${APP_NAME}
   spec:
     template:
       spec:
         containers:
-          - name: $(params.DEPLOYMENT)
+          - name: ${APP_NAME}
             envFrom:
             - configMapRef:
                 name: contrast-cm
             - secretRef:
                 name: contrast-secret
 EOF
-cat manifests/kustomization.yaml
 '''
+        }
+        container('openshift') {
+          sh "cd manifests && APP_NAME=${env.APP_NAME} NAMESPACE=${env.PROJECT} GIT_SHA=${env.GIT_COMMIT} envsubst '\$APP_NAME,\$NAMESPACE,\$GIT_URL' < \"kustomization-template.yaml\" > \"kustomization.yaml\""
         }
       }
     }
